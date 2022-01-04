@@ -1,0 +1,23 @@
+{
+  "name": "base64-vlq",
+  "version": "0.0.1",
+  "description": "A base64 vlq encode/decode utils",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "files": [
+    "index.js"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/champkeh/base64-vlq.git"
+  },
+  "keywords": [],
+  "author": "champkeh",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/champkeh/base64-vlq/issues"
+  },
+  "homepage": "https://github.com/champkeh/base64-vlq#readme"
+}
