@@ -1,10 +1,10 @@
 {
   "name": "base64-vlq",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "A base64 vlq encode/decode utils",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "node test"
   },
   "files": [
     "index.js"

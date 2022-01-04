@@ -30,8 +30,10 @@ function base64VlqEncode(integers) {
  * @return {number[]}
  */
 function vlqEncode(x) {
-    if (x === 0) {
+    if (Object.is(x, 0)) {
         return [0]
+    } else if (Object.is(x, -0)) {
+        return [1]
     }
 
     let absX = Math.abs(x)
