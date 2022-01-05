@@ -1,19 +1,22 @@
 {
   "name": "base64-vlq",
-  "version": "0.0.3",
-  "description": "A base64 vlq encode/decode utils",
+  "version": "0.0.4",
+  "description": "A base64 vlq encode/decode utils for source maps",
   "main": "index.js",
   "scripts": {
     "test": "node test"
   },
   "files": [
-    "index.js"
+    "src/index.js"
   ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/champkeh/base64-vlq.git"
   },
-  "keywords": [],
+  "keywords": [
+    "base64-vlq",
+    "source map"
+  ],
   "author": "champkeh",
   "license": "MIT",
   "bugs": {

@@ -1,5 +1,5 @@
 const assert = require('assert')
-const {base64VlqDecode} = require('../index')
+const {base64VlqDecode} = require('../src/index')
 
 var tests = [
     ['AAAA', [0, 0, 0, 0]],

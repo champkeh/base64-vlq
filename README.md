@@ -1,5 +1,10 @@
 # base64-vlq
 
+A base64 vlq encode/decode utils for source maps.
+
+> note:
+> VLQ encoding here is different from described in [wiki](https://en.wikipedia.org/wiki/Variable-length_quantity), vlq here is use sextet not octet.
+
 ## Install
 ```shell
 npm i base64-vlq
@@ -7,21 +12,11 @@ npm i base64-vlq
 
 ## Usage
 ```js
-const {vlqEncode, vlqDecode} = require('base64-vlq')
-
-// VLQ encode a integer
-vlqEncode(31) // [62, 1]
-
-// VLQ decode a value
-vlqDecode([62, 1]) // 31
-```
-
-```js
 const {base64VlqEncode, base64VlqDecode} = require('base64-vlq')
 
-// base64-vlq encode a integer array
-base64VlqEncode([62, 1]) // 8DC
+base64VlqDecode('AAgBC') // [ 0, 0, 16, 1 ]
+base64VlqEncode([ 0, 0, 16, 1 ]) // AAgBC
 
-// base64-vlq decode a value
-base64VlqDecode('8DC') // [62, 1]
+base64VlqDecode('B') // [ -0 ]
+base64VlqEncode([ -0 ]) // B
 ```
