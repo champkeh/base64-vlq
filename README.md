@@ -2,8 +2,8 @@
 
 A base64 vlq encode/decode utils for source maps.
 
-> note:
-> VLQ encoding here is different from described in [wiki](https://en.wikipedia.org/wiki/Variable-length_quantity), vlq here is use sextet not octet.
+> NOTE:
+> VLQ encoding here is different from described in [wikipedia](https://en.wikipedia.org/wiki/Variable-length_quantity), vlq here is use sextet **not octet**.
 
 ## Install
 ```shell
