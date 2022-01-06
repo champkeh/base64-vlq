@@ -4,9 +4,9 @@ const {base64VlqDecode} = require('../src/index')
 var tests = [
     ['AAAA', [0, 0, 0, 0]],
     ['AAgBC', [0, 0, 16, 1]],
-    ['D', [-1]],
+    ['EAAA', [2, 0, 0, 0]],
     ['B', [-0]],
-    ['+/////D', [2147483647]]
+    // ['+/////D', [2147483647]]
 ];
 
 tests.forEach(function (test) {

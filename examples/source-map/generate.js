@@ -1,0 +1,1 @@
+function convertArray2Min(n){return n.map(n=>n.toString()).sort((n,t)=>{const r=`${n}${t}`;const o=`${t}${n}`;if(+r>+o){return 1}else{return-1}}).join("")}function test(n,t){const r=convertArray2Min(n);console.log(r,r===t?"正确":"错误")}test();
