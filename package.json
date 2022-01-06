@@ -1,6 +1,6 @@
 {
   "name": "base64-vlq",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "A base64 vlq encode/decode utils for source maps",
   "main": "index.js",
   "scripts": {
