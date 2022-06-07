@@ -1,7 +1,7 @@
 const assert = require('assert')
 const {base64VlqEncode} = require('../src/index')
 
-var tests = [
+const tests = [
     [[0, 0, 0, 0], 'AAAA'],
     [[0, 0, 16, 1], 'AAgBC'],
     [[-1], 'D'],

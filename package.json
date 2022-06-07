@@ -4,6 +4,7 @@
   "description": "A base64 vlq encode/decode utils for source maps",
   "main": "index.js",
   "scripts": {
+    "postpublish": "sync-npm-mirror base64-vlq",
     "test": "node test"
   },
   "files": [
@@ -22,5 +23,8 @@
   "bugs": {
     "url": "https://github.com/champkeh/base64-vlq/issues"
   },
-  "homepage": "https://github.com/champkeh/base64-vlq#readme"
+  "homepage": "https://github.com/champkeh/base64-vlq#readme",
+  "devDependencies": {
+    "sync-npm-mirror": "^1.0.0"
+  }
 }
