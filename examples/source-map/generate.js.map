@@ -1,1 +1,25 @@
-{"version":3,"sources":["original.js"],"names":["convertArray2Min","arr","map","n","toString","sort","a","b","ab","ba","join","test","expected","actual","console","log"],"mappings":"AAIA,SAASA,iBAAiBC,GACtB,OAAOA,EAAIC,IAAIC,GAAKA,EAAEC,YAAYC,KAAK,CAACC,EAAGC,KACvC,MAAMC,KAAQF,IAAIC,IAClB,MAAME,KAAQF,IAAID,IAClB,IAAKE,GAAMC,EAAI,CACX,OAAO,MACJ,CACH,OAAQ,KAEbC,KAAK,IAGZ,SAASC,KAAKV,EAAKW,GACf,MAAMC,EAASb,iBAAiBC,GAChCa,QAAQC,IAAIF,EAAQA,IAAWD,EAAW,KAAO,MAKrDD"}
+{
+  "version": 3,
+  "sources": [
+    "original.js"
+  ],
+  "names": [
+    "convertArray2Min",
+    "arr",
+    "map",
+    "n",
+    "toString",
+    "sort",
+    "a",
+    "b",
+    "ab",
+    "ba",
+    "join",
+    "test",
+    "expected",
+    "actual",
+    "console",
+    "log"
+  ],
+  "mappings": "AAIA,SAASA,iBAAiBC,GACtB,OAAOA,EAAIC,IAAIC,GAAKA,EAAEC,YAAYC,KAAK,CAACC,EAAGC,KACvC,MAAMC,KAAQF,IAAIC,IAClB,MAAME,KAAQF,IAAID,IAClB,IAAKE,GAAMC,EAAI,CACX,OAAO,MACJ,CACH,OAAQ,KAEbC,KAAK,IAGZ,SAASC,KAAKV,EAAKW,GACf,MAAMC,EAASb,iBAAiBC,GAChCa,QAAQC,IAAIF,EAAQA,IAAWD,EAAW,KAAO,MAKrDD"
+}
