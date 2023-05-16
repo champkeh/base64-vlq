@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Base64VLQ</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        main {
+            width: 100%;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        textarea {
+            width: 100%;
+            height: 100px;
+            font-size: 16px;
+            resize: vertical;
+            padding: 0.25em 0.5em;
+        }
+
+        .mb30 {
+            margin-bottom: 30px;
+        }
+
+        .mb10 {
+            margin-bottom: 10px;
+        }
+
+        .radio-group > label {
+            display: inline-block;
+            margin-right: 10px;
+        }
+
+        .radio-group input {
+            margin-right: 5px;
+        }
+
+        code {
+            font-size: 12px;
+            border: 1px dashed darkgray;
+            background: #EEE;
+            font-family: Monaco, serif;
+            padding: 0 2px;
+        }
+
+        aside {
+            color: #24272d;
+            font-size: 14px;
+        }
+
+        ul {
+            padding-left: 30px;
+        }
+        ul > li {
+            line-height: 20px;
+        }
+
+        .error {
+            color: crimson;
+        }
+
+        .float-right {
+            float: right;
+        }
+        .hide {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+<main>
+    <h1>Base64VLQ 编解码</h1>
+    <form>
+        <div class="form-item">
+            <label for="input">输入：</label>
+            <textarea id="input" placeholder="请在这里输入要编码/解码的内容" spellcheck="false"></textarea>
+        </div>
+        <div class="form-item mb30">
+            <div class="radio-group mb10" id="radio-group">
+                <label><input type="radio" name="type" value="auto" checked>自动检测</label>
+                <label><input type="radio" name="type" value="encode">编码</label>
+                <label><input type="radio" name="type" value="decode">解码</label>
+            </div>
+            <aside>
+                可以输入的内容：
+                <ul>
+                    <li>单个数字，比如 <code>42</code></li>
+                    <li>数字数组，比如 <code>[42, 127]</code> (要求符合 json 格式)</li>
+                    <li>单个 base64vlq 编码的字符串，比如 <code>DECODEME</code></li>
+                    <li>SourceMap V3 的 mappings 字段，比如 <code>;;;;EAEE,EAAE,EAAC,CAAE;ECQY,UACC</code></li>
+                </ul>
+            </aside>
+        </div>
+        <div class="form-item mb30">
+            <label for="output">输出：
+                <button class="float-right" id="debug">查看调试信息</button>
+            </label>
+            <textarea id="output" disabled wrap="off"></textarea>
+            <div id="error" class="form-item error"></div>
+        </div>
+        <div class="form-item hide">
+            <label for="mappings">解释 Mappings 映射：
+            <button class="float-right" id="switchBtn">切换到绝对位置</button>
+            </label>
+            <p class="mb10">格式：(<code>[generated_pos] => (source_index)[original_pos]</code>)</p>
+            <textarea id="mappings" disabled wrap="off"></textarea>
+        </div>
+    </form>
+    <script src="parser.js"></script>
+    <script>
+        let direction = 'auto'
+        document.querySelector('#radio-group').addEventListener('change', (e) => {
+            direction = e.target.value
+            execute()
+        })
+
+        const inputEl = document.querySelector('#input')
+        inputEl.addEventListener('input', (e) => {
+            execute()
+        })
+
+        let result = null
+
+        function execute() {
+            const input = inputEl.value.trim()
+            if (!input) {
+                setOutput('')
+                setError('')
+                return
+            }
+
+            if (direction === 'encode') {
+                encodeInput(input)
+            } else if (direction === 'decode') {
+                decodeInput(input)
+            } else {
+                // 自动检测
+                if (/^[-0-9\[\],]+$/.test(input)) {
+                    encodeInput(input)
+                } else if (/[a-z0-9,;+/=]+/i.test(input)) {
+                    decodeInput(input)
+                } else {
+                    setError('输入格式不正确')
+                }
+            }
+        }
+
+        function encodeInput(input) {
+            try {
+                result = encode(JSON.parse(input))
+                setOutput(result.value)
+            } catch (e) {
+                console.error(e)
+                setError(e.message)
+            }
+        }
+
+        function decodeInput(input) {
+            try {
+                result = decode(input)
+                setOutput(formatMappingDecodeResult(result))
+            } catch (e) {
+                console.error(e)
+                setError(e.message)
+            }
+        }
+
+        function formatSegmentInfo(segments) {
+            return segments.map(seg => JSON.stringify(seg)).join(', ')
+        }
+
+        const mappingsContainer = document.querySelector('#mappings').parentElement
+        const mappingsEl = document.querySelector('#mappings')
+        let currentIsAbsolute = false
+        const switchBtn = document.querySelector('#switchBtn')
+        switchBtn.addEventListener('click', (e) => {
+            switchAbsolute()
+            e.preventDefault()
+        })
+
+        /**
+         * 格式化解码结果
+         * @param {number[] | Line[]} result
+         * @return {string}
+         */
+        function formatMappingDecodeResult(result) {
+            if (typeof result[0] === 'number') {
+                mappingsContainer.classList.add('hide')
+                return JSON.stringify(result)
+            } else {
+                mappingsContainer.classList.remove('hide')
+                formatMappingsInterpretResult(interpretMappings(result))
+                return result
+                    .filter(line => line.segments.length > 0)
+                    .map(line => `${line.index}) ${formatSegmentInfo(line.segments)}`)
+                    .join('\n')
+            }
+        }
+
+        /**
+         * 解释 mappings 字段的含义(按照原语义，即相对位置)
+         * @param {ParsedSegment[][]} parsedSegment
+         */
+        function formatMappingsInterpretResult(parsedSegment) {
+            mappingsEl.textContent = parsedSegment.filter(line => line.length > 0).map(line => {
+                // [generated_pos] => (source_index)[original_pos]
+                return line.map(seg => `[${seg.generateLine}:${seg.generateColumn}] => (#${seg.originSource})[${seg.originLine}:${seg.originColumn}]`).join(' | ')
+            }).join('\n')
+        }
+        function switchAbsolute() {
+            let parsedSegments
+            if (currentIsAbsolute) {
+                // 切换到相对路径
+                parsedSegments = interpretMappings(result)
+            } else {
+                // 切换到绝对路径
+                let originLineOffset = 0
+                let originColumnOffset = 0
+                let originSourceOffset = 0
+                parsedSegments = interpretMappings(result).filter(line => line.length > 0).map(line => {
+                    let generateColumnOffset = 0
+                    return line.map(seg => {
+                        generateColumnOffset += seg.generateColumn
+                        originLineOffset += seg.originLine
+                        originColumnOffset += seg.originColumn
+                        originSourceOffset += seg.originSource
+                        return {
+                            originLine: originLineOffset,
+                            originColumn: originColumnOffset,
+                            originSource: originSourceOffset,
+                            generateLine: seg.generateLine,
+                            generateColumn: generateColumnOffset,
+                        }
+                    })
+                })
+            }
+            formatMappingsInterpretResult(parsedSegments)
+            currentIsAbsolute = !currentIsAbsolute
+            switchBtn.textContent = currentIsAbsolute ? '切换到相对位置' : '切换到绝对位置'
+        }
+
+        document.querySelector('#debug').addEventListener('click', (e) => {
+            e.preventDefault()
+            showDebug()
+        })
+
+        function showDebug() {
+            console.log(result)
+        }
+
+        const outputEl = document.querySelector('#output')
+
+        function setOutput(content) {
+            outputEl.textContent = content
+            errorEl.textContent = ''
+        }
+
+        const errorEl = document.querySelector('#error')
+
+        function setError(content) {
+            errorEl.textContent = content
+            outputEl.textContent = ''
+        }
+    </script>
+</main>
+</body>
+</html>
